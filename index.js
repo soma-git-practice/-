@@ -1,6 +1,6 @@
 "use strict";
 
-console.clear();
+const display = document.querySelector('.display')
 
-const content = document.querySelector('.dentaku');
-console.log(content);
+// displayに12このcellを作成する。
+// 電卓っぽく点滅させる
