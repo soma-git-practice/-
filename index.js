@@ -1,6 +1,9 @@
 "use strict";
 
-const display = document.querySelector('.display')
+const display = document.querySelector('.display');
 
-// displayに12このcellを作成する。
-// 電卓っぽく点滅させる
+// ボタンに反応させる
+const buttons = document.querySelectorAll('.button');
+for (const btn of buttons) {
+  btn.addEventListener('click', e => console.log(e.target.innerHTML))
+}
