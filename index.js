@@ -10,13 +10,30 @@ for (const btn of buttons) {
   })
 }
 
-// クリックしたものを１の位に表示する
+// アクティブな数字
+let activeFlag = false;
+const DisplayBlink = function() {
+  [...display.children].forEach((elm, index, elms) => {
+    if (/[1-9]/.test(elm.textContent) || index + 1 === elms.length) {
+      activeFlag = true;
+    }
 
-// display.childrenを順番に見ていき０以外が登場したら以降に.isActiveを追加する。
-// 一度も登場しなかった場合一番後ろに.isActiveを追加する。
-const displayItems = display.children;
+    const classOperate = activeFlag ? 'add' : 'remove';
+    elm.classList[classOperate]('isActive');
+  });
+  activeFlag = false;
+};
+DisplayBlink();
 
-[...displayItems].reduce((result, current) => {
-  result.push(current);
-  return result;
-}, [])
+// 配列をディスプレイに表示
+const DisplayOperate = function (array) {
+  // arrayそのものを置き換えてしまう問題
+  array.length = 12;
+  array.reverse();
+  [...display.children].reverse().forEach((elm, index, _elmls) => {
+    elm.textContent = /[1-9\+\-\÷\×]/.test(array[index]) ? array[index] : 0;
+    DisplayBlink();
+  }) 
+}
+const example = ["1", "2", "3", undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined];
+DisplayOperate(example);
