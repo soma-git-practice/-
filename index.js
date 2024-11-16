@@ -78,7 +78,8 @@ document.querySelector('.button[data-type="addition"]').addEventListener('click'
   let num = display_items.reduce((accumulator, currentValue) => accumulator += currentValue)
   num = Number(num);
   const sahen = (result === null) ? num : result(num)
-  // TODO 画面の数字消す
+  display_items = [];
+  DisplayOperate(display_items);
   result = function (arg) {
     return sahen + arg;
   }
@@ -91,7 +92,9 @@ document.querySelector('.button[data-type="equal"]').addEventListener('click', f
   if (result === null) return false;
   const sahen = result(num)
   debugger
-
   // TODO 数字を一文字ずつの配列にする。
+  // JavaScriptで数字を一桁ずつに区切る方法を考えるぞ
   result = null
+  display_items = [];
+  DisplayOperate(display_items);
 });
