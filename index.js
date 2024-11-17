@@ -126,7 +126,8 @@ document.querySelector('.button[data-type="equal"]').addEventListener('click', f
   if (result === null) return false;
 
   const current_value = display_items.reduce((accumulator, currentValue) => accumulator += currentValue, 0);
-  const result_value = result(Number(current_value)).toString().split('');
+  let result_value = result(Number(current_value));
+  result_value = isFinite(result_value) ? result_value.toString().split('') : [];
   DisplayOperate(result_value);
 
   result = null
