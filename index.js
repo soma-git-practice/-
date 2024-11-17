@@ -6,7 +6,7 @@ const display = document.querySelector('.display');
 let activeFlag = false;
 const DisplayBlink = function() {
   [...display.children].forEach((elm, index, elms) => {
-    if (/[1-9]/.test(elm.textContent) || index + 1 === elms.length) {
+    if (/[1-9\+\-\÷\×]/.test(elm.textContent) || index + 1 === elms.length) {
       activeFlag = true;
     }
 
@@ -75,7 +75,7 @@ document.querySelector('.button[data-type="single_clear"]').addEventListener('cl
 
 // +をクリック
 document.querySelector('.button[data-type="addition"]').addEventListener('click', function () {
-  let num = display_items.reduce((accumulator, currentValue) => accumulator += currentValue)
+  let num = display_items.reduce((accumulator, currentValue) => accumulator += currentValue, 0);
   num = Number(num);
   const sahen = (result === null) ? num : result(num)
   display_items = [];
@@ -85,11 +85,23 @@ document.querySelector('.button[data-type="addition"]').addEventListener('click'
   }
 });
 
+// -をクリック
+document.querySelector('.button[data-type="subtraction"]').addEventListener('click', function () {
+  let num = display_items.reduce((accumulator, currentValue) => accumulator += currentValue, 0);
+  num = Number(num);
+  const sahen = (result === null) ? num : result(num);
+  display_items = [];
+  DisplayOperate(display_items);
+  result = function (arg) {
+    return sahen - arg;
+  }
+});
+
 // =をクリック
 document.querySelector('.button[data-type="equal"]').addEventListener('click', function () {
   if (result === null) return false;
 
-  const current_value = display_items.reduce((accumulator, currentValue) => accumulator += currentValue);
+  const current_value = display_items.reduce((accumulator, currentValue) => accumulator += currentValue, 0);
   const result_value = result(Number(current_value)).toString().split('');
   DisplayOperate(result_value);
 
