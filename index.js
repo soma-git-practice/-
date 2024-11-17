@@ -19,7 +19,11 @@ DisplayBlink();
 
 // 配列をディスプレイに表示
 const DisplayOperate = function (array) {
-  if (array.length > 12) { throw new Error('文字数オーバー') };
+  if (array.length > 12) {
+    alert('Error: 文字数オーバー');
+    display_items = [];
+    array = [];
+  };
   
   const difference = display.children.length - array.length;
   const rest = Array(difference).fill(0);
@@ -133,6 +137,3 @@ document.querySelector('.button[data-type="equal"]').addEventListener('click', f
   result = null
   display_items = [];
 });
-
-
-// TODO エラー起きたらダイアログ表示してリロードしたい。
