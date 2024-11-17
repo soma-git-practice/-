@@ -87,14 +87,12 @@ document.querySelector('.button[data-type="addition"]').addEventListener('click'
 
 // =をクリック
 document.querySelector('.button[data-type="equal"]').addEventListener('click', function () {
-  let num = display_items.reduce((accumulator, currentValue) => accumulator += currentValue)
-  num = Number(num);
   if (result === null) return false;
-  const sahen = result(num)
-  debugger
-  // TODO 数字を一文字ずつの配列にする。
-  // JavaScriptで数字を一桁ずつに区切る方法を考えるぞ
+
+  const current_value = display_items.reduce((accumulator, currentValue) => accumulator += currentValue);
+  const result_value = result(Number(current_value)).toString().split('');
+  DisplayOperate(result_value);
+
   result = null
   display_items = [];
-  DisplayOperate(display_items);
 });
