@@ -97,6 +97,30 @@ document.querySelector('.button[data-type="subtraction"]').addEventListener('cli
   }
 });
 
+// ✖️をクリック
+document.querySelector('.button[data-type="multiplication"]').addEventListener('click', function () {
+  let num = display_items.reduce((accumulator, currentValue) => accumulator += currentValue, 0);
+  num = Number(num);
+  const sahen = (result === null) ? num : result(num);
+  display_items = [];
+  DisplayOperate(display_items);
+  result = function (arg) {
+    return sahen * arg;
+  }
+});
+
+// ÷をクリック
+document.querySelector('.button[data-type="division"]').addEventListener('click', function () {
+  let num = display_items.reduce((accumulator, currentValue) => accumulator += currentValue, 0);
+  num = Number(num);
+  const sahen = (result === null) ? num : result(num);
+  display_items = [];
+  DisplayOperate(display_items);
+  result = function (arg) {
+    return Math.floor(sahen / arg);
+  }
+});
+
 // =をクリック
 document.querySelector('.button[data-type="equal"]').addEventListener('click', function () {
   if (result === null) return false;
@@ -108,3 +132,6 @@ document.querySelector('.button[data-type="equal"]').addEventListener('click', f
   result = null
   display_items = [];
 });
+
+
+// TODO エラー起きたらダイアログ表示してリロードしたい。
