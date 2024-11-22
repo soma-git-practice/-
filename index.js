@@ -1,11 +1,20 @@
 "use strict";
 
 const display = document.querySelector('.display');
+const displayChildLimit = 12;
+
+// ディスプレイの作成
+for (let num = 0; num < displayChildLimit; num++){
+  const displayChild = document.createElement('div');
+  displayChild.className = 'cell';
+  displayChild.textContent = 0;
+  display.appendChild(displayChild);
+}
 
 // アクティブな数字
 let activeFlag = false;
 const DisplayBlink = function() {
-  [...display.children].forEach((elm, index, elms) => {
+  Array.from(display.children).forEach((elm, index, elms) => {
     if (/[1-9\+\-\÷\×]/.test(elm.textContent) || index + 1 === elms.length) {
       activeFlag = true;
     }
@@ -29,7 +38,7 @@ const DisplayOperate = function (array) {
   const rest = Array(difference).fill(0);
   const goal = rest.concat(array);
 
-  [...display.children].forEach((elm, index, _elms) => {
+  Array.from(display.children).forEach((elm, index, _elms) => {
     if (/^[0-9\+\-\÷\×]$/.test(goal[index])) {
       elm.textContent = goal[index];      
     } else {
@@ -76,6 +85,31 @@ document.querySelector('.button[data-type="single_clear"]').addEventListener('cl
   display_items.pop();
   DisplayOperate(display_items);
 });
+
+class CalculationSymbol {
+  result = null;
+
+  constructor(thpe) {
+    this._type = thpe;
+  }
+
+  setEvent(){
+    document.querySelector(`.button[data-type="${this._type}"]`).addEventListener('click', function () {
+      // ディスプレイから値を取得
+      const current_value = display_items.reduce((accumulator, currentValue) => accumulator += currentValue, 0);
+      
+      // 値の加工
+      const current_num = Number(current_value);
+      const constant_num = (result === null) ? current_num : result(current_num);
+
+      // ディスプレイ初期化
+      display_items = [];
+      DisplayOperate(display_items);
+
+      // @TODO 次回ここから。静的メソッドresultを書き換える。
+    });
+  }
+}
 
 // +をクリック
 document.querySelector('.button[data-type="addition"]').addEventListener('click', function () {
