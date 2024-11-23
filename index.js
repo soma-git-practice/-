@@ -83,45 +83,28 @@ document.querySelector('.button[data-type="single_clear"]').addEventListener('cl
   DisplayOperate(display_items);
 });
 
-// TODO 各演算子をOperatorクラスのコンストラクタの中に入れて、result_functionをprivateプロパティにする。
 class Operator {
-  static result_function = null;
+  #result_function = null;
 
-  constructor(type, func) {
-    this._type = type;
-    this._func = func;
+  constructor() {
+    // @TODO アロー関数の代わりに無名関数とbindを使ってみる
+    this.combineFormulas({ type: 'addition',       innerFunction: constant_num => { return (current_num) => { return constant_num + current_num } } });             // +
+    this.combineFormulas({ type: 'subtraction',    innerFunction: constant_num => { return (current_num) => { return constant_num - current_num } } });             // -
+    this.combineFormulas({ type: 'multiplication', innerFunction: constant_num => { return (current_num) => { return constant_num * current_num } } });             // ×
+    this.combineFormulas({ type: 'division',       innerFunction: constant_num => { return (current_num) => { return Math.floor(constant_num / current_num) } } }); // ÷
 
-    type === 'equal' ? this.executeFormulas() : this.combineFormulas();
-  }
-
-  // 数式実行
-  executeFormulas() {
-    document.querySelector(`.button[data-type="${this._type}"]`).addEventListener('click', () => {
-      // 演算子をまだ押していない場合、引き返す
-      if (this.constructor.result_function === null) return false;
-
-      // ディスプレイから値を取得
-      const current_value = display_items.reduce((accumulator, currentValue) => accumulator += currentValue, 0);
-      
-      // 計算結果をディスプレイに表示
-      const result_value = this.constructor.result_function(Number(current_value));
-      DisplayOperate(isFinite(result_value) ? result_value.toString().split('') : window.alert('INFINITIE') || []);
-
-      // 初期化
-      this.constructor.result_function = null;
-      display_items = [];
-    });
-  }
+    this.executeFormulas(); // =
+  };
 
   // 数式作成
-  combineFormulas () {
-    document.querySelector(`.button[data-type="${this._type}"]`).addEventListener('click', () => {
+  combineFormulas({ type, innerFunction }) {
+    document.querySelector(`.button[data-type="${type}"]`).addEventListener('click', () => {
       // ディスプレイから値を取得
       const current_value = display_items.reduce((accumulator, currentValue) => accumulator += currentValue, 0);
       
       // 値の加工
       const current_num = Number(current_value);
-      const constant_num = (this.constructor.result_function === null) ? current_num : this.constructor.result_function(current_num);
+      const constant_num = (this.#result_function === null) ? current_num : this.#result_function(current_num);
 
       // ディスプレイをまっさらに
       display_items = [];
@@ -130,42 +113,32 @@ class Operator {
       // 結果がINTINITIEの場合を考慮
       if (isFinite(constant_num)) {
         // 関数を共有
-        this.constructor.result_function = this._func(constant_num);
+        this.#result_function = innerFunction(constant_num);
       } else {
         window.alert('INFINITIE');
-        this.constructor.result_function = null;
+        this.#result_function = null;
       };
+    });
+  }
+
+  // 数式実行
+  executeFormulas() {
+    document.querySelector('.button[data-type="equal"]').addEventListener('click', () => {
+      // 演算子をまだ押していない場合、引き返す
+      if (this.#result_function === null) return false;
+
+      // ディスプレイから値を取得
+      const current_value = display_items.reduce((accumulator, currentValue) => accumulator += currentValue, 0);
+      
+      // 計算結果をディスプレイに表示
+      const result_value = this.#result_function(Number(current_value));
+      DisplayOperate(isFinite(result_value) ? result_value.toString().split('') : window.alert('INFINITIE') || []);
+
+      // 初期化
+      this.#result_function = null;
+      display_items = [];
     });
   }
 }
 
-// +をクリック
-new Operator('addition', constant_num => {
-  return (current_num) => {
-    return constant_num + current_num;
-  };
-});
-
-// -をクリック
-new Operator('subtraction', constant_num => {
-  return (current_num) => {
-    return constant_num - current_num;
-  };
-});
-
-// ✖️をクリック
-new Operator('multiplication', constant_num => {
-  return (current_num) => {
-    return constant_num * current_num;
-  };
-});
-
-// ÷をクリック
-new Operator('division', constant_num => {
-  return (current_num) => {
-    return Math.floor(constant_num / current_num);
-  };
-});
-
-// =をクリック
-new Operator('equal');
+new Operator;
