@@ -86,7 +86,7 @@ document.querySelector('.button[data-type="single_clear"]').addEventListener('cl
   DisplayOperate(display_items);
 });
 
-// TODO 動作確認
+// TODO 動作確認 & 0 ÷ xxx した時のinfinitie問題の確認
 class Operator {
   constructor(type, func) {
     this._type = type;
