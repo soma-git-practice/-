@@ -2,6 +2,7 @@
 
 const display = document.querySelector('.display');
 const displayChildLimit = 12;
+let display_items = [];
 
 // ディスプレイの作成
 for (let num = 0; num < displayChildLimit; num++){
@@ -12,8 +13,8 @@ for (let num = 0; num < displayChildLimit; num++){
 }
 
 // アクティブな数字
-let activeFlag = false;
 const DisplayBlink = function() {
+  let activeFlag = false;
   Array.from(display.children).forEach((elm, index, elms) => {
     if (/[1-9\+\-\÷\×]/.test(elm.textContent) || index + 1 === elms.length) {
       activeFlag = true;
@@ -47,8 +48,6 @@ const DisplayOperate = function (array) {
   });
   DisplayBlink();
 }
-
-let display_items = [];
 
 // 1 ~ 9 をクリック時
 for (const btn of document.querySelectorAll('.button[data-type="number"]')) {
@@ -84,7 +83,7 @@ document.querySelector('.button[data-type="single_clear"]').addEventListener('cl
   DisplayOperate(display_items);
 });
 
-// TODO 動作確認 & 0 ÷ xxx した時のinfinitie問題の確認
+// TODO 各演算子をOperatorクラスのコンストラクタの中に入れて、result_functionをprivateプロパティにする。
 class Operator {
   static result_function = null;
 
@@ -106,7 +105,7 @@ class Operator {
       
       // 計算結果をディスプレイに表示
       const result_value = this.constructor.result_function(Number(current_value));
-      DisplayOperate(isFinite(result_value) ? result_value.toString().split('') : []);
+      DisplayOperate(isFinite(result_value) ? result_value.toString().split('') : window.alert('INFINITIE') || []);
 
       // 初期化
       this.constructor.result_function = null;
@@ -128,8 +127,14 @@ class Operator {
       display_items = [];
       DisplayOperate(display_items);
 
-      // 関数を共有
-      this.constructor.result_function = this._func(constant_num);
+      // 結果がINTINITIEの場合を考慮
+      if (isFinite(constant_num)) {
+        // 関数を共有
+        this.constructor.result_function = this._func(constant_num);
+      } else {
+        window.alert('INFINITIE');
+        this.constructor.result_function = null;
+      };
     });
   }
 }
