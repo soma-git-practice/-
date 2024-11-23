@@ -49,8 +49,6 @@ const DisplayOperate = function (array) {
 }
 
 let display_items = [];
-const buttons = document.querySelectorAll('.button');
-let result_function = null;
 
 // 1 ~ 9 をクリック時
 for (const btn of document.querySelectorAll('.button[data-type="number"]')) {
@@ -88,13 +86,35 @@ document.querySelector('.button[data-type="single_clear"]').addEventListener('cl
 
 // TODO 動作確認 & 0 ÷ xxx した時のinfinitie問題の確認
 class Operator {
+  static result_function = null;
+
   constructor(type, func) {
     this._type = type;
     this._func = func;
-    this.combineFormulas();
+
+    type === 'equal' ? this.executeFormulas() : this.combineFormulas();
   }
 
-  // 数式の作成
+  // 数式実行
+  executeFormulas() {
+    document.querySelector(`.button[data-type="${this._type}"]`).addEventListener('click', () => {
+      // 演算子をまだ押していない場合、引き返す
+      if (this.constructor.result_function === null) return false;
+
+      // ディスプレイから値を取得
+      const current_value = display_items.reduce((accumulator, currentValue) => accumulator += currentValue, 0);
+      
+      // 計算結果をディスプレイに表示
+      const result_value = this.constructor.result_function(Number(current_value));
+      DisplayOperate(isFinite(result_value) ? result_value.toString().split('') : []);
+
+      // 初期化
+      this.constructor.result_function = null;
+      display_items = [];
+    });
+  }
+
+  // 数式作成
   combineFormulas () {
     document.querySelector(`.button[data-type="${this._type}"]`).addEventListener('click', () => {
       // ディスプレイから値を取得
@@ -102,14 +122,14 @@ class Operator {
       
       // 値の加工
       const current_num = Number(current_value);
-      const constant_num = (result_function === null) ? current_num : result_function(current_num);
+      const constant_num = (this.constructor.result_function === null) ? current_num : this.constructor.result_function(current_num);
 
       // ディスプレイをまっさらに
       display_items = [];
       DisplayOperate(display_items);
 
       // 関数を共有
-      result_function = this._func(constant_num);
+      this.constructor.result_function = this._func(constant_num);
     });
   }
 }
@@ -143,14 +163,4 @@ new Operator('division', constant_num => {
 });
 
 // =をクリック
-document.querySelector('.button[data-type="equal"]').addEventListener('click', function () {
-  if (result_function === null) return false;
-
-  const current_value = display_items.reduce((accumulator, currentValue) => accumulator += currentValue, 0);
-  let result_value = result_function(Number(current_value));
-  result_value = isFinite(result_value) ? result_value.toString().split('') : [];
-  DisplayOperate(result_value);
-
-  result_function = null
-  display_items = [];
-});
+new Operator('equal');
