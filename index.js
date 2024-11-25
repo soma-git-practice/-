@@ -97,7 +97,7 @@ class Operator {
 
   // 数式作成
   combineFormulas({ type, innerFunction }) {
-    document.querySelector(`.button[data-type="${type}"]`).addEventListener('click', function() {
+    document.querySelector(`.button[data-type="${type}"]`).addEventListener('click', () => {
       // ディスプレイから値を取得
       const current_value = display_items.reduce((accumulator, currentValue) => accumulator += currentValue, 0);
       
@@ -117,7 +117,7 @@ class Operator {
         window.alert('INFINITIE');
         this.#result_function = null;
       };
-    }.bind(this));
+    });
   }
 
   // 数式実行
