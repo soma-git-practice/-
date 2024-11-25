@@ -87,7 +87,6 @@ class Operator {
   #result_function = null;
 
   constructor() {
-    // @TODO アロー関数の代わりに無名関数とbindを使ってみる
     this.combineFormulas({ type: 'addition',       innerFunction: constant_num => { return (current_num) => { return constant_num + current_num } } });             // +
     this.combineFormulas({ type: 'subtraction',    innerFunction: constant_num => { return (current_num) => { return constant_num - current_num } } });             // -
     this.combineFormulas({ type: 'multiplication', innerFunction: constant_num => { return (current_num) => { return constant_num * current_num } } });             // ×
