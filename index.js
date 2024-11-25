@@ -49,39 +49,14 @@ const DisplayOperate = function (array) {
   DisplayBlink();
 }
 
-// 1 ~ 9 をクリック時
-for (const btn of document.querySelectorAll('.button[data-type="number"]')) {
-  btn.addEventListener('click', function () {
-    display_items.push(this.textContent);
+// 数字
+for (const operand of document.querySelectorAll('.button[data-type="number"]')) {
+  operand.addEventListener('click', function () {
+    if (this.textContent.includes('0') && display_items.length === 0) return false;
+    display_items = [...display_items, ...this.textContent.split('')];
     DisplayOperate(display_items);
-  })
-}
-
-// 0 をクリック時
-document.querySelector('.button[data-type="single_zero"]').addEventListener('click', function () {
-  if (display_items.length == 0) return false;
-  display_items.push(this.textContent);
-  DisplayOperate(display_items);
-})
-
-// 00 をクリック時
-document.querySelector('.button[data-type="double_zelo"]').addEventListener('click', function () {
-  if (display_items.length == 0) return false;
-  display_items = display_items.concat([0, 0]);
-  DisplayOperate(display_items);
-})
-
-// CCをクリック
-document.querySelector('.button[data-type="double_clear"]').addEventListener('click', function () {
-  display_items = [];
-  DisplayOperate(display_items);
-});
-
-// Cをクリック
-document.querySelector('.button[data-type="single_clear"]').addEventListener('click', function () {
-  display_items.pop();
-  DisplayOperate(display_items);
-});
+  });
+};
 
 class Operator {
   #result_function = null;
@@ -91,6 +66,9 @@ class Operator {
     this.combineFormulas({ type: 'subtraction',    innerFunction: constant_num => { return (current_num) => { return constant_num - current_num } } });             // -
     this.combineFormulas({ type: 'multiplication', innerFunction: constant_num => { return (current_num) => { return constant_num * current_num } } });             // ×
     this.combineFormulas({ type: 'division',       innerFunction: constant_num => { return (current_num) => { return Math.floor(constant_num / current_num) } } }); // ÷
+
+    this.clearCurrentNumber({ type: 'double_clear', splice_index: 0 })  // CC
+    this.clearCurrentNumber({ type: 'single_clear', splice_index: -1 }) // C
 
     this.executeFormulas(); // =
   };
@@ -117,6 +95,14 @@ class Operator {
         window.alert('INFINITIE');
         this.#result_function = null;
       };
+    });
+  }
+
+  // ディスプレイから取り除く
+  clearCurrentNumber({ type, splice_index }) {
+    document.querySelector(`.button[data-type="${type}"]`).addEventListener('click', () => {
+      display_items.splice(splice_index);
+      DisplayOperate(display_items);
     });
   }
 
