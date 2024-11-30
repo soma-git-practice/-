@@ -12,13 +12,14 @@ for (let count = 0; count < cellCount; count++){
 }
 
 let row = [];
-const cells = display.children;
 
 // 配列をディスプレイに表示
-const DisplayOperate = function (array) {  
-  const lack = cells.length - array.length;
+const DisplayOperate = function (contents) {  
+  const cells = display.children;
+
+  const lack = cells.length - contents.length;
   const patch = Array(lack).fill('0');
-  const result = [...patch, ...array];
+  const result = [...patch, ...contents];
 
   let thisIsContinuing = false;
   Array.from(cells).forEach((elm, index, elms) => {
