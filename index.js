@@ -11,8 +11,6 @@ for (let count = 0; count < cellCount; count++){
   display.appendChild(cell);
 }
 
-let row = [];
-
 // 配列をディスプレイに表示
 const DisplayOperate = function (contents) {  
   const cells = display.children;
@@ -39,6 +37,8 @@ const DisplayOperate = function (contents) {
     elm.textContent = value;
   });
 }
+
+let row = [];
 
 // 数字
 for (const operand of document.querySelectorAll('.button[data-type="number"]')) {
