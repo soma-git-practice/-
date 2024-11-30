@@ -16,26 +16,26 @@ const cells = display.children;
 
 // 配列をディスプレイに表示
 const DisplayOperate = function (array) {  
-  const difference = cells.length - array.length;
-  const rest = Array(difference).fill(0);
-  const goal = rest.concat(array);
+  const lack = cells.length - array.length;
+  const patch = Array(lack).fill('0');
+  const result = [...patch, ...array];
 
-  Array.from(cells).forEach((elm, index, _elms) => {
-    if (/^[0-9\+\-\÷\×]$/.test(goal[index])) {
-      elm.textContent = goal[index];      
-    } else {
-      throw new Error('不正な値');
-    }
-  });
-
-  let activeFlag = false;
+  let thisIsContinuing = false;
   Array.from(cells).forEach((elm, index, elms) => {
-    if (/[1-9\+\-\÷\×]/.test(elm.textContent) || index + 1 === elms.length) {
-      activeFlag = true;
-    }
+    const value = result[index];
+    if (/^[^0-9\+\-\÷\×]$/.test(value)) throw new Error('不正な値');
 
-    const classOperate = activeFlag ? 'add' : 'remove';
-    elm.classList[classOperate]('isActive');
+    const thisIsNotZero = value !== '0';
+    const thisIsLast = (index + 1 === elms.length);
+    if (thisIsNotZero) {
+      thisIsContinuing = true;
+    };
+
+    const bools = [thisIsNotZero, thisIsContinuing, thisIsLast];
+    const method = bools.some(bool => bool === true) ? 'add' : 'remove';
+    elm.classList[method]('isActive');
+
+    elm.textContent = value;
   });
 }
 
