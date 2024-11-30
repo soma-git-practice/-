@@ -28,13 +28,7 @@ const DisplayBlink = function() {
 DisplayBlink();
 
 // 配列をディスプレイに表示
-const DisplayOperate = function (array) {
-  if (array.length > 12) {
-    alert('Error: 文字数オーバー');
-    display_items = [];
-    array = [];
-  };
-  
+const DisplayOperate = function (array) {  
   const difference = display.children.length - array.length;
   const rest = Array(difference).fill(0);
   const goal = rest.concat(array);
@@ -53,7 +47,12 @@ const DisplayOperate = function (array) {
 for (const operand of document.querySelectorAll('.button[data-type="number"]')) {
   operand.addEventListener('click', function () {
     if (this.textContent.includes('0') && display_items.length === 0) return false;
-    display_items = [...display_items, ...this.textContent.split('')];
+    if (display_items.length === 12) {
+      alert('Error: 文字数オーバー');
+      display_items = [];
+    } else {
+      display_items = [...display_items, ...this.textContent.split('')];
+    }
     DisplayOperate(display_items);
   });
 };
