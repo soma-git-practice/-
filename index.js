@@ -19,19 +19,19 @@ const DisplayOperate = function (contents) {
   const patch = Array(lack).fill('0');
   const result = [...patch, ...contents];
 
-  let thisIsContinuing = false;
+  let isThisContinuing = false;
   Array.from(cells).forEach((elm, index, elms) => {
     const value = result[index];
     if (/^[^0-9\+\-\÷\×]$/.test(value)) throw new Error('不正な値');
 
-    const thisIsNotZero = value !== '0';
-    const thisIsLast = (index + 1 === elms.length);
-    if (thisIsNotZero) {
-      thisIsContinuing = true;
+    const isThisNotZero = value !== '0';
+    const isThisLast = (index + 1 === elms.length);
+    if (isThisNotZero) {
+      isThisContinuing = true;
     };
 
-    const bools = [thisIsNotZero, thisIsContinuing, thisIsLast];
-    const method = bools.some(bool => bool === true) ? 'add' : 'remove';
+    const isThisActive = isThisNotZero || isThisContinuing || isThisLast;
+    const method = isThisActive ? 'add' : 'remove';
     elm.classList[method]('isActive');
 
     elm.textContent = value;
@@ -39,6 +39,7 @@ const DisplayOperate = function (contents) {
 }
 
 let row = [];
+DisplayOperate(row);
 
 // TODO 数字と演算子をボタンの括りでまとめてdata型によって処理を分岐するようにする。
 // TODO 変数rowをプライベートプロパティにする。
