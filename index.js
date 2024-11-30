@@ -1,21 +1,35 @@
 "use strict";
 
 const display = document.querySelector('.display');
-const displayChildLimit = 12;
-let display_items = [];
+const cellCount = 12;
 
 // ディスプレイの作成
-for (let num = 0; num < displayChildLimit; num++){
-  const displayChild = document.createElement('div');
-  displayChild.className = 'cell';
-  displayChild.textContent = 0;
-  display.appendChild(displayChild);
+for (let count = 0; count < cellCount; count++){
+  const cell = document.createElement('div');
+  cell.className = 'cell';
+  cell.textContent = 0;
+  display.appendChild(cell);
 }
 
-// アクティブな数字
-const DisplayBlink = function() {
+let row = [];
+const cells = display.children;
+
+// 配列をディスプレイに表示
+const DisplayOperate = function (array) {  
+  const difference = cells.length - array.length;
+  const rest = Array(difference).fill(0);
+  const goal = rest.concat(array);
+
+  Array.from(cells).forEach((elm, index, _elms) => {
+    if (/^[0-9\+\-\÷\×]$/.test(goal[index])) {
+      elm.textContent = goal[index];      
+    } else {
+      throw new Error('不正な値');
+    }
+  });
+
   let activeFlag = false;
-  Array.from(display.children).forEach((elm, index, elms) => {
+  Array.from(cells).forEach((elm, index, elms) => {
     if (/[1-9\+\-\÷\×]/.test(elm.textContent) || index + 1 === elms.length) {
       activeFlag = true;
     }
@@ -23,37 +37,19 @@ const DisplayBlink = function() {
     const classOperate = activeFlag ? 'add' : 'remove';
     elm.classList[classOperate]('isActive');
   });
-  activeFlag = false;
-};
-DisplayBlink();
-
-// 配列をディスプレイに表示
-const DisplayOperate = function (array) {  
-  const difference = display.children.length - array.length;
-  const rest = Array(difference).fill(0);
-  const goal = rest.concat(array);
-
-  Array.from(display.children).forEach((elm, index, _elms) => {
-    if (/^[0-9\+\-\÷\×]$/.test(goal[index])) {
-      elm.textContent = goal[index];      
-    } else {
-      throw new Error('不正な値');
-    }
-  });
-  DisplayBlink();
 }
 
 // 数字
 for (const operand of document.querySelectorAll('.button[data-type="number"]')) {
   operand.addEventListener('click', function () {
-    if (this.textContent.includes('0') && display_items.length === 0) return false;
-    if (display_items.length === 12) {
+    if (this.textContent.includes('0') && row.length === 0) return false;
+    if (row.length === 12) {
       alert('Error: 文字数オーバー');
-      display_items = [];
+      row = [];
     } else {
-      display_items = [...display_items, ...this.textContent.split('')];
+      row = [...row, ...this.textContent.split('')];
     }
-    DisplayOperate(display_items);
+    DisplayOperate(row);
   });
 };
 
@@ -76,15 +72,15 @@ class Operator {
   combineFormulas({ type, innerFunction }) {
     document.querySelector(`.button[data-type="${type}"]`).addEventListener('click', () => {
       // ディスプレイから値を取得
-      const current_value = display_items.reduce((accumulator, currentValue) => accumulator += currentValue, 0);
+      const current_value = row.reduce((accumulator, currentValue) => accumulator += currentValue, 0);
       
       // 値の加工
       const current_num = Number(current_value);
       const constant_num = (this.#result_function === null) ? current_num : this.#result_function(current_num);
 
       // ディスプレイをまっさらに
-      display_items = [];
-      DisplayOperate(display_items);
+      row = [];
+      DisplayOperate(row);
 
       // 結果がINTINITIEの場合を考慮
       if (isFinite(constant_num)) {
@@ -100,8 +96,8 @@ class Operator {
   // ディスプレイから取り除く
   clearCurrentNumber({ type, splice_index }) {
     document.querySelector(`.button[data-type="${type}"]`).addEventListener('click', () => {
-      display_items.splice(splice_index);
-      DisplayOperate(display_items);
+      row.splice(splice_index);
+      DisplayOperate(row);
     });
   }
 
@@ -112,7 +108,7 @@ class Operator {
       if (this.#result_function === null) return false;
 
       // ディスプレイから値を取得
-      const current_value = display_items.reduce((accumulator, currentValue) => accumulator += currentValue, 0);
+      const current_value = row.reduce((accumulator, currentValue) => accumulator += currentValue, 0);
       
       // 計算結果をディスプレイに表示
       const result_value = this.#result_function(Number(current_value));
@@ -120,7 +116,7 @@ class Operator {
 
       // 初期化
       this.#result_function = null;
-      display_items = [];
+      row = [];
     });
   }
 }
