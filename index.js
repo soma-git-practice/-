@@ -40,6 +40,11 @@ const DisplayOperate = function (contents) {
 
 let row = [];
 
+// TODO 数字と演算子をボタンの括りでまとめてdata型によって処理を分岐するようにする。
+// TODO 変数rowをプライベートプロパティにする。
+// TODO ディスプレイの作成を関数からメソッドに変更
+// TODO ディスプレイを表示を関数からメソッドに変更
+
 // 数字
 for (const operand of document.querySelectorAll('.button[data-type="number"]')) {
   operand.addEventListener('click', function () {
